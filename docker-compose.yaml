@@ -1,0 +1,25 @@
+# Use root/example as user/password credentials
+version: '3.1'
+
+services:
+  pv211.laravel-tasks:
+    build:
+      dockerfile: ./Dockerfile
+    container_name: pv211.laravel-tasks
+    volumes:
+      - ./src:/var/www    # Монтируем локальную папку src в контейнер
+    ports:
+      - "8000:8000"       # Пробрасываем порт 8000 на хост
+    working_dir: /var/www
+    command: ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
+
+  pv211.laravel-tasks-db:
+    image: mariadb:11.0
+    ports:
+      - "3306:3306"
+    environment:
+      MARIADB_ROOT_PASSWORD: QweAsdZxc!23
+      MYSQL_ROOT_PASSWORD: QweAsdZxc!23
+      MYSQL_DATABASE: laravel
+      MYSQL_USER: laravel
+      MYSQL_PASSWORD: QweAsdZxc!23
