@@ -33,5 +33,23 @@
             @method('DELETE')
             <button type="submit" class="btn btn-danger">Видалити</button>
         </form>
+
+        <h3 class="mt-4">Додати коментар</h3>
+        <form action="{{ route('tasks.comments.store', $task) }}" method="POST">
+            @csrf
+            <div class="mb-3">
+                <textarea name="content" class="form-control" placeholder="Ваш коментар" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Додати коментар</button>
+        </form>
+
+        <h3 class="mt-4">Додати файл</h3>
+        <form action="{{ route('tasks.attachments.store', $task) }}" method="POST" enctype="multipart/form-data">
+            @csrf
+            <div class="mb-3">
+                <input type="file" name="file" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Додати файл</button>
+        </form>
     </div>
 @endsection
