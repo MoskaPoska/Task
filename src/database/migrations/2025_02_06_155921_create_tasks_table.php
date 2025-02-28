@@ -29,6 +29,12 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::dropIfExists('task_tag');
+        Schema::dropIfExists('comments');
+        Schema::dropIfExists('attachments');
+        Schema::dropIfExists('subtasks');
+
+        // Удаляем саму таблицу tasks
         Schema::dropIfExists('tasks');
     }
 };

@@ -47,7 +47,7 @@ class SubtaskController extends Controller
      */
     public function show(Task $task, Subtasks $subtasks)
     {
-        $this->authorize('view', $task);
+//        $this->authorize('view', $task);
         return view('subtasks.show', compact('task', 'subtasks'));
     }
 
@@ -56,7 +56,7 @@ class SubtaskController extends Controller
      */
     public function edit(Task $task, Subtasks $subtasks)
     {
-        $this->authorize('update', $task);
+//        $this->authorize('update', $task);
         return view('subtasks.edit', compact('task', 'subtasks'));
     }
 
@@ -65,7 +65,7 @@ class SubtaskController extends Controller
      */
     public function update(Request $request, Task $task, Subtasks $subtasks)
     {
-        $this->authorize('update', $task);
+//        $this->authorize('update', $task);
 
         $request -> validate([
             'title'=>'required|string|max:255'
@@ -81,7 +81,7 @@ class SubtaskController extends Controller
      */
     public function destroy(Task $task, Subtasks $subtasks)
     {
-        $this->authorize('update', $task);
+//        $this->authorize('update', $task);
         $subtasks->delete();
         return redirect()->back('tasks.subtasks.index', $task)->with('success', 'Підзавдання успішно видалено');
     }

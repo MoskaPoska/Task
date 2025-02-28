@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section()
+@section('content')
     <div class="container">
         <h1>Редагувати тег</h1>
         <form action="{{route('tags.update', $tag)}}" method="POST">

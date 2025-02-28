@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UpdateTaskRequest;
 use App\Models\Tags;
 use App\Models\Task;
 use Illuminate\Container\Attributes\Tag;
+use App\Http\Requests\StoreTaskRequest;
 use Illuminate\Http\Request;
 
 class TaskController extends Controller
@@ -14,10 +16,35 @@ class TaskController extends Controller
      */
     public function index()
     {
-        $tasks = Task::where('user_id', auth()->id())->get();
+        $tasks = Task::where('user_id', auth()->id())
+            ->with(['attachments', 'comments', 'tags'])
+            ->get();
+
         return view('tasks.index', compact('tasks'));
     }
+    public function search(Request $request)
+    {
+        $search = $request->input('search');
 
+        if ($search) {
+            $tasks = Task::where('user_id', auth()->id())
+                ->where(function ($query) use ($search) {
+                    $query->where('title', 'like', "%$search%")
+                        ->orWhereHas('tags', function ($query) use ($search) {
+                            $query->where('name', 'like', "%$search%");
+                        });
+                })
+                ->with(['attachments', 'comments', 'tags'])
+                ->orderByRaw("CASE WHEN title = ? THEN 0 ELSE 1 END", [$search])
+                ->get();
+        } else {
+            $tasks = Task::where('user_id', auth()->id())
+                ->with(['attachments', 'comments', 'tags'])
+                ->get();
+        }
+
+        return view('tasks.index', compact('tasks', 'search'));
+    }
     /**
      * Show the form for creating a new resource.
      */
@@ -57,7 +84,7 @@ class TaskController extends Controller
      */
     public function show(Task $task)
     {
-        $this->authorize('view', $task);
+//        $this->authorize('view', $task);
         return view('tasks.show', compact('task'));
     }
 
@@ -66,7 +93,7 @@ class TaskController extends Controller
      */
     public function edit(Task $task)
     {
-        $this->authorize('update', $task);
+//        $this->authorize('update', $task);
         $tags = Tags::all();
         return view('tasks.edit', compact('task', 'tags'));
     }
@@ -76,20 +103,20 @@ class TaskController extends Controller
      */
     public function update(UpdateTaskRequest $request, Task $task)
     {
-        $this->authorize('update', $task);
+//        $this->authorize('update', $task);
 
-        // Дані вже пройшли валідацію
+
         $validatedData = $request->validated();
 
-        // Оновлення завдання
+
         $task->update([
-            'title' => $validatedData['title'],
-            'description' => $validatedData['description'],
-            'priority' => $validatedData['priority'],
-            'due_date' => $validatedData['due_date'],
+            'title' => $validatedData['title']?? $task->title,
+            'description' => $validatedData['description']?? $task->description,
+            'priority' => $validatedData['priority']?? $task->priority,
+            'due_date' => $validatedData['due_date']?? $task->due_date,
         ]);
 
-        // Синхронізація тегів
+
         if ($request->has('tags')) {
             $task->tags()->sync($request->tags);
         } else {
@@ -104,7 +131,7 @@ class TaskController extends Controller
      */
     public function destroy(Task $task)
     {
-        $this->authorize('update', $task);
+//        $this->authorize('update', $task);
         $task->delete();
         return redirect()->route('tasks.index')->with('success', 'Завдання успішно видалено');
     }
@@ -118,35 +145,39 @@ class TaskController extends Controller
     }
     public function addComment(Request $request, Task $task)
     {
-        // Перевірка, чи завдання належить поточному користувачу
-        $this->authorize('view', $task);
-
-        // Валідація даних
         $request->validate([
             'content' => 'required|string',
         ]);
 
-        // Створення коментаря
+        $content = $request->input('content'); // Получаем значение из запроса
+
         $task->comments()->create([
             'user_id' => auth()->id(),
-            'content' => $request->content,
+            'content' => $content, // Используем полученное значение $content
         ]);
 
         return redirect()->back()->with('success', 'Коментар успішно додано!');
     }
-    public function addAtachment(Request $request, Task $task)
+    public function addAttachment(Request $request, Task $task)
     {
-        $this->authorize('view', $task);
-        $request->validate([
-            'file'=>'required|file|max:2048'
-        ]);
-        $file=$request->file('file');
-        $path=$file->store('attachments');
 
-        $task->attachments()->create([
-            'fie_path'=>$path,
-            'file_name'=>$file->getClientOriginalName()
+//        $this->authorize('view', $task);
+
+
+        $request->validate([
+            'file' => 'required|file|max:2048',
         ]);
+
+
+        $file = $request->file('file');
+        $path = $file->store('attachments');
+
+        // Создаем запись о вложении
+        $task->attachments()->create([
+            'file_path' => $path,
+            'file_name' => $file->getClientOriginalName(),
+        ]);
+
         return redirect()->back()->with('success', 'Файл успішно додано!');
     }
 }

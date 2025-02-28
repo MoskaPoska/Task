@@ -2,9 +2,9 @@
 @section('content')
     <div class="container">
         <h1>{{$task->title}}</h1>
-        <p>{{$task->description}}}</p>
+        <p>{{$task->description}}</p>
         <small>Пріоритет: {{$task->priority}}, Дата завршення: {{$task->due_date}}</small>
-        <h3>Підзавдання</h3>
+{{--        <h3>Підзавдання</h3>--}}
         <ul>
             @foreach($task->subtasks as $subtask)
                 <li>{{$subtask->title}}</li>
@@ -14,7 +14,7 @@
         <ul>
             @foreach($task->comments as $comment)
                 <li>
-                    {{$comment->user->name}}
+{{--                    {{$comment->user->name}}--}}
                     {{$comment->content}}
                 </li>
             @endforeach
@@ -27,8 +27,8 @@
                 </li>
             @endforeach
         </ul>
-        <a href="{{route('task.edit', $task)}}" class="btn btn-warning">Редагувати</a>
-        <form action="{{route('task.destroy', $task)}}" method="POST" class="g-line">
+        <a href="{{route('tasks.index', $task)}}" class="btn btn-warning">Перейти на головну</a>
+        <form action="{{route('tasks.destroy', $task)}}" method="POST" class="g-line">
             @csrf
             @method('DELETE')
             <button type="submit" class="btn btn-danger">Видалити</button>

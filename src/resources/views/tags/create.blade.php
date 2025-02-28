@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section()
+@section('content')
     <div class="container">
         <h1>Створити новий тег</h1>
         <form action="{{route('tags.store')}}" method="POST">

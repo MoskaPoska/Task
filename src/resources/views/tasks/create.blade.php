@@ -9,7 +9,7 @@
                 <input type="text" name="title" id="title" class="form-control" required>
             </div>
             <div class="mb-3">
-                <label for="description" class="form-label"></label>
+                <label for="description" class="form-label">Опис</label>
                 <textarea name="description" id="description" class="form-control"></textarea>
             </div>
             <div class="mb-3">
@@ -28,7 +28,7 @@
                 <label for="tags" class="form-label">Теги</label>
                 <select name="tags[]" id="tags" class="form-control" multiple>
                     @foreach($tags as $tag)
-                        <option value="{{$tag->id}}}">{{$tag->name}}}</option>
+                        <option value="{{$tag->id}}">{{$tag->name}}</option>
                     @endforeach
                 </select>
             </div>

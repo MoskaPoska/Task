@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section()
+@section('content')
     <div class="container">
         <h1>Редагування завдання</h1>
         <form action="{{route('tasks.update', $task)}}" method="POST">
@@ -11,7 +11,7 @@
             </div>
             <div class="mb-3">
                 <label for="description" class="form-label">Опис</label>
-                <textarea name="description" id="description" class="form-control">value="{{$task->description}}"</textarea>
+                <textarea name="description" id="description" class="form-control"> {{$task->description}}</textarea>
             </div>
             <div class="mb-3">
                 <label for="priority" class="form-label">Пріоритет</label>
@@ -29,7 +29,7 @@
                 <label for="tags" class="form-label">Теги</label>
                 <select name="tags[]" id="tags" class="form-control" multiple>
                     @foreach($tags as $tag)
-                        <option value="{{$tag->id}}}" {{$task->tags->contains($tag->id)? 'selected':''}} >{{$tag->name}}}</option>
+                        <option value="{{$tag->id}}" {{$task->tags->contains($tag->id)? 'selected':''}} >{{$tag->name}}</option>
                     @endforeach
                 </select>
             </div>
